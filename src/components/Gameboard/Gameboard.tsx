@@ -14,6 +14,7 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
     const [countdownStarted, toggleCountdown] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const [randomWord, setRandomWord] = useState("--start-game--");
+    const [startLock, setStartLock] = useState(false);
 
 
     const newWord = () => {
@@ -62,7 +63,7 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
     }
     
     const handleStart = () => {
-        if(countdownStarted){
+        if(countdownStarted || startLock){
             return;
         }
         let newWord;
@@ -80,6 +81,12 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
         toggleCountdown(false);
         const minutes = startSeconds / 60;
         setWpm(Math.floor(score / minutes));
+
+        setStartLock(true);
+
+        setTimeout(() => {
+            setStartLock(false);
+        }, 1500);
     }
 
     return (
