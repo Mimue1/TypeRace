@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import { Timer } from "./Timer/Timer";
-import { Button, Typography } from "@mui/material";
 import { IntervalOption, IntervalSelectContainer, Score, WordsContainer } from "./Gameboard.styles";
 
 interface GameboardProps {
@@ -12,10 +11,21 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
     const [seconds, setSeconds] = useState(60);
     const [score, setScore] = useState(0);
     const [wpm, setWpm] = useState(0);
-    const [countdownStarted, setCountdownStarted] = useState(false);
+    const [countdownStarted, toggleCountdown] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const [randomWord, setRandomWord] = useState("--start-game--");
 
+
+    const newWord = () => {
+        let newWord;
+
+            do {
+                newWord = challangeWords[Math.floor(Math.random() * challangeWords.length)];
+            } while (newWord === randomWord);
+            setRandomWord(newWord);
+            setScore((score) => score + 1);
+            setInput("");
+    }
 
     const handleKeyDown = (e:React.KeyboardEvent<HTMLInputElement>) => {
         const value = e.currentTarget.value;
@@ -24,14 +34,19 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
             if(value !== randomWord || countdownStarted === false){
                 return;
             }
-            let newWord;
+            newWord();
+        }
 
-            do {
-                newWord = challangeWords[Math.floor(Math.random() * challangeWords.length)];
-            } while (newWord === randomWord);
-            setRandomWord(newWord);
-            setScore((score) => score + 1);
-            setInput("");
+        if(e.key === " "){
+            if(!countdownStarted){
+                handleStart();
+            }
+            else{
+                if(value !== randomWord){
+                    return;
+                }
+                newWord();
+            }
         }
     }
 
@@ -43,7 +58,7 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
         setRandomWord("--start-game--");
         setScore(0);
         setInput("");
-        setCountdownStarted(false);
+        toggleCountdown(false);
     }
     
     const handleStart = () => {
@@ -58,11 +73,11 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
         setRandomWord(newWord);
         setScore(0);
         setInput("");
-        setCountdownStarted(true);
+        toggleCountdown(true);
     }
 
     const handleTimerEnd = (startSeconds: number) => {
-        setCountdownStarted(false);
+        toggleCountdown(false);
         const minutes = startSeconds / 60;
         setWpm(Math.floor(score / minutes));
     }
@@ -86,7 +101,7 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
                 )
             })}
         </WordsContainer>
-        <input ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} style={{width: "250px", height: "30px", borderRadius: "5px"}} onKeyDown={handleKeyDown}></input>
+        <input ref={inputRef} value={input.trim()} onChange={(e) => setInput(e.target.value)} style={{width: "250px", height: "30px", borderRadius: "5px"}} onKeyDown={handleKeyDown} placeholder="press Space..."></input>
         <p> Score: {score}</p>  
         <div >
             <button style={{margin: "5px"}} onClick={handleStart}>Start</button>
