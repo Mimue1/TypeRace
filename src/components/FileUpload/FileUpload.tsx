@@ -35,7 +35,7 @@ export const FileUpload = ({setChallengeWords}:FileUploadProps) => {
 
     return(
         <>
-            <input type="file" accept=".txt" id="fileUpload" onChange={handleUpload} style={{ display: "none"}} />
+            <input data-testid="file-input" type="file" accept=".txt" id="fileUpload" onChange={handleUpload} style={{ display: "none"}} />
             <Tooltip title="Upload Words (.txt)" arrow>
                 <label 
                     htmlFor="fileUpload" 
