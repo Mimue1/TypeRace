@@ -1,4 +1,5 @@
-FROM node:20-alpine AS dev
+ARG Node_VERSION=20-alpine
+FROM node:${Node_VERSION} AS dev
  
 # Set working directory inside the container
 WORKDIR /workspace
@@ -14,7 +15,7 @@ COPY . .
  
  
 # Ensure the "node" user owns the application files
-RUN chown -R node:node /app
+RUN chown -R node:node /workspace
  
  
 # Switch to the built-in non-root "node" user

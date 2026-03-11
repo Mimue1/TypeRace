@@ -2,7 +2,7 @@
   "name": "TypeRace",
   "build": {
     "dockerfile": "Dockerfile",
-    "context": "..",
+    "context": ".",
     "args": {
       "Node_VERSION": "20-alpine"
     }
@@ -20,9 +20,5 @@
     }
   },
   "postCreateCommand": "npm install",
-  "remoteUser": "node",
-  "features": {
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": 20
-  }
-}}
+  "remoteUser": "node"
+}
