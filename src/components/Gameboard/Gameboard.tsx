@@ -30,15 +30,16 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
 
     const handleKeyDown = (e:React.KeyboardEvent<HTMLInputElement>) => {
         const value = e.currentTarget.value;
-        
+       
         if(e.key === "Enter") {
             if(value !== randomWord || countdownStarted === false){
                 return;
             }
             newWord();
         }
-
+        
         if(e.key === " "){
+            e.preventDefault();
             if(!countdownStarted){
                 handleStart();
             }
@@ -100,15 +101,28 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
         <Timer key={seconds} countdownStarted={countdownStarted} startSeconds={seconds} onEnd={() => handleTimerEnd(seconds)}/>
         <WordsContainer>
             {randomWord.split("").map((letter, index) => {
-                const isCorrect = input[index] == letter;
+                const typed = input[index];
+
+                let color = "white";
+
+                if(typed != undefined){
+                    color = typed === letter ? "#5ed881" : "red";
+                }
                 return(
-                    <span key={index} style={{color: isCorrect ? "#5ed881" : "white"}}>
+                    <span key={index} style={{color}}>
                         {letter}
                     </span>
-                )
+                );
             })}
+            {input.length > randomWord.length &&
+                input.slice(randomWord.length).split("").map((letter, index) =>(
+                    <span key={`overflow-${index}`} style={{color: "red"}}>
+                        {letter}
+                    </span>
+                ))  
+            }
         </WordsContainer>
-        <input ref={inputRef} value={input.trim()} onChange={(e) => setInput(e.target.value)} style={{width: "250px", height: "30px", borderRadius: "5px"}} onKeyDown={handleKeyDown} placeholder="press Space..."></input>
+        <input ref={inputRef} value={input.trimStart()} onChange={(e) => setInput(e.target.value)} style={{width: "250px", height: "30px", borderRadius: "5px"}} onKeyDown={handleKeyDown} placeholder="press Space..."></input>
         <p> Score: {score}</p>  
         <div >
             <button style={{margin: "5px"}} onClick={handleStart}>Start</button>
