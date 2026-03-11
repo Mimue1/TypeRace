@@ -1,12 +1,6 @@
 {
   "name": "TypeRace",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".",
-    "args": {
-      "Node_VERSION": "20-alpine"
-    }
-  },
+  "image": "mcr.microsoft.com/vscode/devcontainers/base:20",
   "workspaceFolder": "/workspace",
   "features": {
     "ghcr.io/devcontainers/features/node:1": { "version": 20 }
@@ -16,12 +10,10 @@
   "remoteUser": "node",
   "customizations": {
     "vscode": {
-        "extensions": [
-            "dbaeumer.vscode-eslint",
-            "esbenp.prettier-vscode",
-            "formulahendry.auto-close-tag",
-            "formulahendry.auto-rename-tag"
-        ]
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
     }
-  },
+  }
 }
