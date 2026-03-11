@@ -1,9 +1,7 @@
-ARG NODE_VERSION=20-alpine
- 
-FROM node:${NODE_VERSION} AS dev
+FROM node:20-alpine AS dev
  
 # Set working directory inside the container
-WORKDIR /app
+WORKDIR /workspace
  
 # Copy package files
 COPY package*.json ./
