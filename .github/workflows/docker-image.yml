@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Image CI + Deploy React App
 
 on:
   push:
@@ -7,12 +7,44 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag typerace:$(date +%s)
+      # Checkout code
+      - uses: actions/checkout@v4
+
+      # Set up Node.js for building React
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build React app
+      - name: Build React App
+        run: npm run build
+
+      # Build Docker image
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag typerace:$(date +%s)
+
+      # Deploy to GitHub Pages
+      - name: Deploy GitHub Pages site
+        uses: actions/deploy-pages@v4.0.5
+        with:
+          # GitHub token
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Time in milliseconds after which to timeout and cancel the deployment (default: 10 minutes)
+          timeout: 60000
+          # Maximum number of status report errors before cancelling a deployment (default: 10)
+          error_count: # optional, default is 10
+          # Time in milliseconds between two deployment status report (default: 5 seconds)
+          reporting_interval: # optional, default is 5000
+          # Name of the artifact to deploy
+          artifact_name: typerace-page
+          publish_dir: ./build
