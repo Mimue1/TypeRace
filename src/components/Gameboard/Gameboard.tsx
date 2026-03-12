@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Timer } from "./Timer/Timer";
 import { IntervalOption, IntervalSelectContainer, Score, WordsContainer } from "./Gameboard.styles";
+import  JSConfetti from "js-confetti";
 
 interface GameboardProps {
     challangeWords: string[]
@@ -10,11 +11,14 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
     const [input, setInput] = useState("");
     const [seconds, setSeconds] = useState(60);
     const [score, setScore] = useState(0);
+    const [highscore, setHighscore] = useState(0);
     const [wpm, setWpm] = useState(0);
     const [countdownStarted, toggleCountdown] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const [randomWord, setRandomWord] = useState("--start-game--");
     const [startLock, setStartLock] = useState(false);
+
+    const jsConfetti = new JSConfetti();
 
 
     const newWord = () => {
@@ -81,7 +85,12 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
     const handleTimerEnd = (startSeconds: number) => {
         toggleCountdown(false);
         const minutes = startSeconds / 60;
-        setWpm(Math.floor(score / minutes));
+        const newWpm = Math.floor(score/minutes);
+        if(newWpm > wpm){
+            setHighscore(newWpm)
+            jsConfetti.addConfetti();
+        }
+        setWpm(newWpm);
 
         setStartLock(true);
 
@@ -92,6 +101,7 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
 
     return (
         <>
+        <Score>Highscore: {highscore} wpm</Score>
         <Score>Words/Minute {wpm}</Score>
         <IntervalSelectContainer>
             <IntervalOption selected={seconds === 30} onClick={() => setSeconds(30)} variant="outlined">30 sek</IntervalOption> 
@@ -102,9 +112,9 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
         <WordsContainer>
             {randomWord.split("").map((letter, index) => {
                 const typed = input[index];
-
+                
                 let color = "white";
-
+                
                 if(typed != undefined){
                     color = typed === letter ? "#5ed881" : "red";
                 }
@@ -123,8 +133,8 @@ export const Gameboard = ({challangeWords}: GameboardProps) => {
             }
         </WordsContainer>
         <input ref={inputRef} value={input.trimStart()} onChange={(e) => setInput(e.target.value)} style={{width: "250px", height: "30px", borderRadius: "5px"}} onKeyDown={handleKeyDown} placeholder="press Space..."></input>
-        <p> Score: {score}</p>  
-        <div >
+        {/* <p> Score: {score}</p>   */}
+        <div style={{margin: "10px"}} >
             <button style={{margin: "5px"}} onClick={handleStart}>Start</button>
             <button style={{margin: "5px"}} onClick={handleReset}>Reset</button>
         </div>
