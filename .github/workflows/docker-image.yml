@@ -34,8 +34,17 @@ jobs:
         run: docker build . --file Dockerfile --tag typerace:$(date +%s)
 
       # Deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v6
+      - name: Deploy GitHub Pages site
+        uses: actions/deploy-pages@v4.0.5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # GitHub token
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Time in milliseconds after which to timeout and cancel the deployment (default: 10 minutes)
+          timeout: 60000
+          # Maximum number of status report errors before cancelling a deployment (default: 10)
+          error_count: # optional, default is 10
+          # Time in milliseconds between two deployment status report (default: 5 seconds)
+          reporting_interval: # optional, default is 5000
+          # Name of the artifact to deploy
+          artifact_name: typerace-page
           publish_dir: ./build
